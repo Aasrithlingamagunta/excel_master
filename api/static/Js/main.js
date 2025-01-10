@@ -1,14 +1,26 @@
 document.addEventListener("DOMContentLoaded", function () {
     const uploadForm = document.getElementById("uploadForm");
-    const messageDiv = document.getElementById("uploadMessage");
-    const questionForm = document.getElementById("qaForm");
-    const answerDiv = document.getElementById("answer");
-    let extractedContent = ""; // Variable to store the extracted content from the uploaded file
+    const qaForm = document.getElementById("qaForm");
+    const uploadMessage = document.getElementById("uploadMessage");
+    const answerField = document.getElementById("answer");
+    let extractedContent = ""; // Store extracted content from the uploaded file
 
-    // Handle file upload
+    /**
+     * Displays a message with the given text and type (success or error)
+     * @param {string} message - The message to display
+     * @param {string} type - The type of message ("success" or "error")
+     */
+    function displayMessage(message, type) {
+        uploadMessage.textContent = message;
+        uploadMessage.className = `message ${type}`;
+        uploadMessage.style.display = "block";
+    }
+
+    /**
+     * Handles the file upload process
+     */
     uploadForm.addEventListener("submit", async function (e) {
-        e.preventDefault(); // Prevent default form submission
-
+        e.preventDefault();
         const formData = new FormData(uploadForm);
 
         try {
@@ -20,30 +32,24 @@ document.addEventListener("DOMContentLoaded", function () {
             const result = await response.json();
 
             if (response.ok) {
-                // Show success message and store extracted content
-                messageDiv.textContent = result.message || "File uploaded successfully!";
-                messageDiv.className = "message success";
-                extractedContent = result.content; // Save the extracted content
+                displayMessage(result.message || "File uploaded successfully!", "success");
+                extractedContent = result.content; // Store extracted content for querying
                 document.getElementById("qaSection").style.display = "block"; // Show Q&A section
             } else {
-                // Show error message
-                messageDiv.textContent = result.error || "Error uploading file.";
-                messageDiv.className = "message error";
+                displayMessage(result.error || "Error uploading file.", "error");
             }
         } catch (error) {
-            // Handle network or server errors
-            messageDiv.textContent = "Something went wrong. Please try again.";
-            messageDiv.className = "message error";
+            displayMessage("Something went wrong. Please try again.", "error");
         }
-
-        messageDiv.style.display = "block";
     });
 
-    // Handle Q&A submission
-    questionForm.addEventListener("submit", async function (e) {
-        e.preventDefault(); // Prevent default form submission
-
+    /**
+     * Handles the question submission process
+     */
+    qaForm.addEventListener("submit", async function (e) {
+        e.preventDefault();
         const question = document.getElementById("question").value;
+        answerField.textContent = "Fetching answer..."; // Show loading message
 
         try {
             const response = await fetch("/api/question/", {
@@ -51,26 +57,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({
-                    question: question,
-                    content: extractedContent, // Include the extracted content
-                }),
+                body: JSON.stringify({ question: question, content: extractedContent }),
             });
 
             const result = await response.json();
 
             if (response.ok) {
-                // Display the answer
-                answerDiv.textContent = result.answer || "No answer found.";
+                answerField.textContent = result.answer || "No answer found.";
             } else {
-                // Show error message
-                answerDiv.textContent = result.error || "Error processing question.";
+                answerField.textContent = result.error || "Error processing question.";
             }
         } catch (error) {
-            // Handle network or server errors
-            answerDiv.textContent = "Something went wrong. Please try again.";
+            answerField.textContent = "Something went wrong. Please try again.";
         }
-
-        answerDiv.style.display = "block";
     });
 });

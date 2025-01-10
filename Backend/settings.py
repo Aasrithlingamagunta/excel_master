@@ -114,9 +114,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = posixpath.join(*(BASE_DIR.split(os.path.sep) + ['static']))
 # STATICFILES_DIRS = [BASE_DIR / "static"]
-import os
 
-# Ensure the environment variable is accessible
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-print(f"Loaded OpenAI API Key: {OPENAI_API_KEY}")  # Debugging step
+from decouple import config
+
+HUGGING_FACE_API_TOKEN = config("HUGGING_FACE_API_TOKEN", default="")  # Use the actual environment variable name
+
 
