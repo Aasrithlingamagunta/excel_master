@@ -118,5 +118,6 @@ STATIC_ROOT = posixpath.join(*(BASE_DIR.split(os.path.sep) + ['static']))
 from decouple import config
 
 HUGGING_FACE_API_TOKEN = config("HUGGING_FACE_API_TOKEN", default="")  # Use the actual environment variable name
+ALLOWED_HOSTS = ['*']
 
 

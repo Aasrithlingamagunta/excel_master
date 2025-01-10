@@ -19,11 +19,17 @@ Including another URLconf
 # Uncomment next two lines to enable admin:
 from django.contrib import admin
 from django.urls import path, include
+from django.shortcuts import redirect  # Add this import
 
 urlpatterns = [
-    path('admin/', admin.site.urls),  # Default Django admin URL
-    path('api/', include('api.urls')),
-    path('main/', include('api.urls')),  # Include the `api` app's URL configuration
+    path('admin/', admin.site.urls),  # Admin route
+    path('api/', include('api.urls')),  # Include the API routes
+    path('main/', include('api.urls')),  # Main endpoint
+
+    # Redirect the root URL `/` to `/main/`
+    path('', lambda request: redirect('/main/', permanent=False)),  # Add this line
 ]
+
+
 
 

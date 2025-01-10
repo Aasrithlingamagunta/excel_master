@@ -1,9 +1,8 @@
 from django.urls import path
-from .views import render_main_page, upload_file_view, qa_view   # Correctly import the function from `views.py`
+from . import views
 
 urlpatterns = [
-    path('', render_main_page, name='main_page'),
-    path('upload/', upload_file_view, name='upload_file'),
-    path('question/', qa_view, name='qa_view'),
-    # Render the main HTML
+    path('upload/', views.upload_file_view, name='upload'),  # Handle file uploads
+    path('question/', views.qa_view, name='question'),  # Handle Q&A requests
+    path('', views.render_main_page, name='main'),  # Main page view
 ]
